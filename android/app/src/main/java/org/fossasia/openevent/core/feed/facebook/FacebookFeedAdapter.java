@@ -19,6 +19,7 @@ import com.squareup.picasso.Picasso;
 
 import org.fossasia.openevent.R;
 import org.fossasia.openevent.common.ui.base.BaseRVAdapter;
+import org.fossasia.openevent.core.feed.OpenCommentsDialogListener;
 import org.fossasia.openevent.core.feed.facebook.api.CommentItem;
 import org.fossasia.openevent.core.feed.facebook.api.FeedItem;
 import org.fossasia.openevent.common.ui.image.OnImageZoomListener;
@@ -33,7 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class FeedAdapter extends BaseRVAdapter<FeedItem, FeedAdapter.RecyclerViewHolder> {
+public class FacebookFeedAdapter extends BaseRVAdapter<FeedItem, FacebookFeedAdapter.RecyclerViewHolder> {
 
     private List<FeedItem> feedItems;
     private Context context;
@@ -85,11 +86,10 @@ public class FeedAdapter extends BaseRVAdapter<FeedItem, FeedAdapter.RecyclerVie
         }
     }
 
-    public FeedAdapter(Context context, OpenCommentsDialogListener openCommentsDialogListener, List<FeedItem> feedItems) {
+    public FacebookFeedAdapter(Context context, List<FeedItem> feedItems) {
         super(feedItems);
         this.feedItems = feedItems;
         this.context = context;
-        this.openCommentsDialogListener = openCommentsDialogListener;
     }
 
     @Override
@@ -157,10 +157,6 @@ public class FeedAdapter extends BaseRVAdapter<FeedItem, FeedAdapter.RecyclerVie
         holder.getComments.setText(context.getString(R.string.comments_value, comments));
     }
 
-    public interface OpenCommentsDialogListener {
-        void openCommentsDialog(List<CommentItem> commentItems);
-    }
-
     public void setOnImageZoomListener(OnImageZoomListener onImageZoomListener) {
         this.onImageZoomListener = onImageZoomListener;
     }
@@ -173,6 +169,10 @@ public class FeedAdapter extends BaseRVAdapter<FeedItem, FeedAdapter.RecyclerVie
         if (onImageZoomListener != null) {
             onImageZoomListener.onZoom(imageUri);
         }
+    }
+
+    public void setOpenCommentsDialogListener(OpenCommentsDialogListener openCommentsDialogListener) {
+        this.openCommentsDialogListener = openCommentsDialogListener;
     }
 
     public void removeOpenCommentsDialogListener() {

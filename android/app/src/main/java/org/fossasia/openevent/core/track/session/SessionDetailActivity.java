@@ -52,8 +52,10 @@ import org.fossasia.openevent.core.bookmark.BookmarkStatus;
 import org.fossasia.openevent.core.bookmark.OnBookmarkSelectedListener;
 import org.fossasia.openevent.data.Microlocation;
 import org.fossasia.openevent.data.Session;
+import org.fossasia.openevent.data.SessionType;
 import org.fossasia.openevent.data.Speaker;
 import org.fossasia.openevent.data.Track;
+import org.fossasia.openevent.data.repository.RealmDataRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +114,12 @@ public class SessionDetailActivity extends BaseActivity implements AppBarLayout.
     protected ImageView youtubeThumbnail;
     @BindView(R.id.watch)
     protected ImageButton playButton;
+    @BindView(R.id.sessionType)
+    protected TextView sessionType;
+    @BindView(R.id.type)
+    protected TextView typeLabel;
+    @BindView(R.id.typeLayout)
+    protected LinearLayout typelayout;
 
     private String trackName, title, location;
     private int trackColor, darkColor, fontColor;
@@ -139,6 +147,7 @@ public class SessionDetailActivity extends BaseActivity implements AppBarLayout.
 
         title = getIntent().getStringExtra(ConstantStrings.SESSION);
         trackName = getIntent().getStringExtra(ConstantStrings.TRACK);
+
         if (TextUtils.isEmpty(trackName))
             hasTrack = false;
         id = getIntent().getIntExtra(ConstantStrings.ID, 0);
@@ -153,6 +162,11 @@ public class SessionDetailActivity extends BaseActivity implements AppBarLayout.
         fabSessionBookmark.setOnClickListener(view -> {
             if(session == null)
                 return;
+
+            if (RealmDataRepository.isNull(session.getTrack())) {
+                Snackbar.make(speakersRecyclerView, R.string.invalid_track, Snackbar.LENGTH_SHORT).show();
+                return;
+            }
 
             if(session.getIsBookmarked()) {
                 Timber.tag(TAG).d("Bookmark Removed");
@@ -205,6 +219,13 @@ public class SessionDetailActivity extends BaseActivity implements AppBarLayout.
         } else {
             location = getString(R.string.location_not_decided);
             text_room1.setText(location);
+        }
+
+        SessionType type = session.getSessionType();
+
+        if (type != null) {
+            sessionType.setText(type.getName());
+            typelayout.setVisibility(View.VISIBLE);
         }
 
         text_title.setText(title);
